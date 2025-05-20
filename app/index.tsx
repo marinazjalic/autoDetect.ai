@@ -1,49 +1,30 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { Button, Text, TouchableOpacity, View } from 'react-native';
-import { styles } from './styles';
+import { View } from 'react-native';
+import { Camera } from '../components/Camera/Camera';
+import { CameraPermissions } from '../components/Camera/CameraPermissions';
+import { ImagePreview } from '../components/ImagePreview/ImagePreview';
+
 
 export default function App() {
-  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
   if (!permission) {
     return <View />;
   }
 
   if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
+     return <CameraPermissions requestPermission={() => requestPermission()} />;
+   
   }
 
-  function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  }
-
-  function takePicture() {
-   //to-do
+   if (capturedImage) {
+    return <ImagePreview imageUri={capturedImage} onReset={() => setCapturedImage(null)} />;
   }
 
   return (
-    <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
-        <View style={styles.controlsContainer}>
-          <View style={styles.spacer} />
-          
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
-            <View style={styles.captureButtonInner} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
-            <MaterialCommunityIcons name="camera-flip" size={28} color="white" />
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-    </View>
-  );
+    <Camera setCapturedImage={setCapturedImage}/>
+  )
 }
+
