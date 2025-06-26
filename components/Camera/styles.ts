@@ -51,4 +51,11 @@ export const styles = StyleSheet.create({
   spacer: {
     width: 56, 
   },
+  loadingOverlay: {
+  ...StyleSheet.absoluteFillObject,
+  backgroundColor: 'black',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 10,
+},
 });
